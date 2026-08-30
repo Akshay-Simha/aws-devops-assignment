@@ -1,20 +1,26 @@
-FROM node:25-alpine AS builder
+FROM node:22-alpine AS builder
+
 WORKDIR /app
 
+RUN npm install -g pnpm@11.24.0
+
 COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm
-RUN pnpm install
+
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-FROM node:25-alpine AS runtime
+FROM node:22-alpine AS runtime
+
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm
-RUN pnpm install --prod
+RUN npm install -g pnpm@11.24.0
 
-COPY --from=builder /app .
+COPY package.json pnpm-lock.yaml ./
+
+RUN pnpm install --prod --frozen-lockfile
+
+COPY --from=builder /app ./
 
 EXPOSE 5000
 
