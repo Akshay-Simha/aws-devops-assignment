@@ -10,3 +10,4 @@ build/
 *.log
 coverage/
 pnpm-debug.log*
+.pnpm-store/
